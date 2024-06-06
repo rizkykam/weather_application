@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:weather_application/application/provider.dart';
 import 'package:weather_application/bloc/weather_bloc.dart';
 import 'package:weather_application/const/applocator/service_locator.dart';
 import 'package:weather_application/const/utils/weather_string.dart';
@@ -19,14 +21,16 @@ import 'package:weather_application/screens/home_screen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   ServicesLocator().init();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return ScreenUtilInit(
       designSize: const Size(360, 690),
         minTextAdapt: true,
@@ -48,7 +52,7 @@ class MyApp extends StatelessWidget {
               darkTheme: darkTheme,
               debugShowCheckedModeBanner: false,
               title: WeatherAppString.title,
-              themeMode: ThemeMode.system,
+              themeMode: themeMode,
               onGenerateRoute: RouteGenerator.getRoute,
               initialRoute: WeatherRoutes.homePageRoute,
             ),
