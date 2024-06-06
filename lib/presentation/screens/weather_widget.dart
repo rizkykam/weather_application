@@ -52,224 +52,216 @@ class WeatherUIWidget extends ConsumerWidget {
         height: size.height,
         padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
         color: ColorApp.primaryColor.withOpacity(.1),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              height: size.height * .55,
-              decoration: BoxDecoration(
-                gradient: ColorApp.linearGradientBlue,
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorApp.primaryColor.withOpacity(.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Column(
-                children: [
-                  10.0.sizeHeight,
-                  HomeUtils.getWeatherIcon(
-                    weatherModel.weather[0].icon) !=
-                    WeatherIcons.refresh
-                    ? Icon(
-                      HomeUtils.getWeatherIcon(
-                        weatherModel.weather[0].icon),
-                        size: 80.0,
-                        color: ColorApp.yellowColor,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                height: size.height * .55,
+                decoration: BoxDecoration(
+                  gradient: ColorApp.linearGradientBlue,
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorApp.primaryColor.withOpacity(.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  children: [
+                    10.0.sizeHeight,
+                    HomeUtils.getWeatherIcon(
+                      weatherModel.weather[0].icon) !=
+                      WeatherIcons.refresh
+                      ? Icon(
+                        HomeUtils.getWeatherIcon(
+                          weatherModel.weather[0].icon),
+                          size: 80.0,
+                          color: ColorApp.yellowColor,
                       )
-                        : Image.network(
-                          HomeUtils.getWeatherIconURL(
-                            weatherModel.weather[0].icon),
-                            color: ColorApp.yellowColor,
-                          ),
-                  10.0.sizeHeight,
-                  
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RichText(
-                          text: TextSpan(children: <InlineSpan>[
-                        TextSpan(
-                          text:
-                              themperatureRef == ThemperatureData.celsius ? weatherModel.main.temp.celcius : weatherModel.main.temp.fahrenheit,
-                          style: WeatherFonts.medium(
-                                  fontWeight: FontWeight.w500,
-                                  color: ColorApp.whiteColor)
-                              .copyWith(fontSize: WeatherFontSize.s40),
-                        )
-                      ])),
-                    ],
-                  ),
-
-                  Text(
-                    weatherModel.weather[0].description
-                    .capitalizeFirstLater(),
-                    style: WeatherFonts.large(
-                      fontWeight: FontWeight.w400,
-                      color: ColorApp.whiteColor)
-                      .copyWith(fontSize: WeatherFontSize.s30),
-                  ),
-                  // 10.0.sizeHeight,
-                    Center(
-                        child: Text(
-                      HomeUtils.today(),
-                      style: WeatherFonts.medium(
-                              fontWeight: FontWeight.w200,
-                              color: ColorApp.whiteColor)
-                          .copyWith(fontSize: WeatherFontSize.s24),
-                    )),
-                  2.0.sizeHeight,
-                    Center(
-                        child: Text(
-                      HomeUtils.formatDateTime(
-                          weatherModel.updatedAt.toIso8601String()),
-                      style: WeatherFonts.large(
-                              fontWeight: FontWeight.w300,
-                              color:
-                                  ColorApp.whiteColor.withOpacity(0.75))
-                          .copyWith(
-                        fontSize: WeatherFontSize.s16,
+                      : Image.network(
+                        HomeUtils.getWeatherIconURL(
+                          weatherModel.weather[0].icon),
+                          color: ColorApp.yellowColor,
                       ),
-                    )),
-
-                  Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                children: [
-                                  Image.asset(WeatherAppResources.humidtyIcon, width: 30.0, height: 30.0,),
-                                  3.0.sizeHeight,
-                                  Text(
-                                    WeatherAppString.humidity,
-                                    style: WeatherFonts.large(
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorApp.whiteColor)
-                                        .copyWith(
-                                            fontSize: WeatherFontSize.s14),
-                                  ),
-                                  3.0.sizeHeight,
-                                  Text(
-                                    "${weatherModel.main.humidity} ${WeatherAppString.percent}",
-                                    style: WeatherFonts.large(
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorApp.whiteColor)
-                                        .copyWith(
-                                            fontSize: WeatherFontSize.s14),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Image(
-                                      image: Svg(WeatherAppResources.windIcon)),
-                                  3.0.sizeHeight,
-                                  Text(
-                                    WeatherAppString.wind,
-                                    style: WeatherFonts.large(
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorApp.whiteColor)
-                                        .copyWith(
-                                            fontSize: WeatherFontSize.s14),
-                                  ),
-                                  3.0.sizeHeight,
-                                  Text(
-                                    "${weatherModel.wind.speed} ${WeatherAppString.kmh}",
-                                    style: WeatherFonts.large(
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorApp.whiteColor)
-                                        .copyWith(
-                                            fontSize: WeatherFontSize.s14),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Image(
-                                      image:
-                                          Svg(WeatherAppResources.feelsLike)),
-                                  3.0.sizeHeight,
-                                  Text(
-                                    WeatherAppString.feelsLike,
-                                    style: WeatherFonts.large(
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorApp.whiteColor)
-                                        .copyWith(
-                                            fontSize: WeatherFontSize.s14),
-                                  ),
-                                  3.0.sizeHeight,
-                                  Text(
-                                    weatherModel.main.feelsLike
-                                        .ceil()
-                                        .toString(),
-                                    style: WeatherFonts.large(
-                                            fontWeight: FontWeight.w500,
-                                            color: ColorApp.whiteColor)
-                                        .copyWith(
-                                            fontSize: WeatherFontSize.s14),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                ],
+                    10.0.sizeHeight,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: <InlineSpan>[
+                              TextSpan(
+                                text: themperatureRef == ThemperatureData.celsius ? weatherModel.main.temp.celcius : weatherModel.main.temp.fahrenheit,
+                                style: WeatherFonts.medium(
+                                  fontWeight: FontWeight.w500,
+                                  color: ColorApp.whiteColor,
+                                ).copyWith(fontSize: WeatherFontSize.s40),
+                              )
+                            ]
+                          )
+                        ),
+                      ],
+                    ),
+                    Text(
+                      weatherModel.weather[0].description.capitalizeFirstLater(),
+                      style: WeatherFonts.large(
+                        fontWeight: FontWeight.w400,
+                        color: ColorApp.whiteColor
+                      ).copyWith(fontSize: WeatherFontSize.s30),
+                    ),
+                    Center(
+                      child: Text(
+                        HomeUtils.today(),
+                        style: WeatherFonts.medium(
+                          fontWeight: FontWeight.w200,
+                          color: ColorApp.whiteColor)
+                          .copyWith(fontSize: WeatherFontSize.s24),
+                      )
+                    ),
+                    2.0.sizeHeight,
+                    Center(
+                      child: Text(
+                        HomeUtils.formatDateTime(weatherModel.updatedAt.toIso8601String()),
+                        style: WeatherFonts.large(
+                          fontWeight: FontWeight.w300,
+                          color: ColorApp.whiteColor.withOpacity(0.75)
+                        ).copyWith(fontSize: WeatherFontSize.s16,),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              children: [
+                                Image.asset(WeatherAppResources.humidtyIcon, width: 30.0, height: 30.0,),
+                                3.0.sizeHeight,
+                                Text(
+                                  WeatherAppString.humidity,
+                                  style: WeatherFonts.large(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorApp.whiteColor)
+                                      .copyWith(
+                                          fontSize: WeatherFontSize.s14),
+                                ),
+                                3.0.sizeHeight,
+                                Text(
+                                  "${weatherModel.main.humidity} ${WeatherAppString.percent}",
+                                  style: WeatherFonts.large(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorApp.whiteColor)
+                                      .copyWith(
+                                          fontSize: WeatherFontSize.s14),
+                                )
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Image(
+                                    image: Svg(WeatherAppResources.windIcon)),
+                                3.0.sizeHeight,
+                                Text(
+                                  WeatherAppString.wind,
+                                  style: WeatherFonts.large(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorApp.whiteColor)
+                                      .copyWith(
+                                          fontSize: WeatherFontSize.s14),
+                                ),
+                                3.0.sizeHeight,
+                                Text(
+                                  "${weatherModel.wind.speed} ${WeatherAppString.kmh}",
+                                  style: WeatherFonts.large(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorApp.whiteColor)
+                                      .copyWith(
+                                          fontSize: WeatherFontSize.s14),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Image(
+                                    image:
+                                        Svg(WeatherAppResources.feelsLike)),
+                                3.0.sizeHeight,
+                                Text(
+                                  WeatherAppString.feelsLike,
+                                  style: WeatherFonts.large(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorApp.whiteColor)
+                                      .copyWith(
+                                          fontSize: WeatherFontSize.s14),
+                                ),
+                                3.0.sizeHeight,
+                                Text(
+                                  weatherModel.main.feelsLike
+                                      .ceil()
+                                      .toString(),
+                                  style: WeatherFonts.large(
+                                          fontWeight: FontWeight.w500,
+                                          color: ColorApp.whiteColor)
+                                      .copyWith(
+                                          fontSize: WeatherFontSize.s14),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                  ],
+                ),
               ),
-            ),
-
-          BlocBuilder<ForecastControllerBloc, ForecastControllerState>(
-                builder: (context, states) {
-              if (states is ForecastLoaded) {
-                List<ListElement> data = [];
-                data.add(states.foreCastModel.list[0]);
-                data.add(states.foreCastModel.list[1]);
-                data.add(states.foreCastModel.list[2]);
-                data.add(states.foreCastModel.list[3]);
-                List<String> dayNext = HomeUtils.getNextFiveDays();
-                return Padding(
-                  padding: const EdgeInsets.only(top: 4, left: 3, right: 3),
-                  child: Center(
-                    child: SizedBox(
-                      height: 220.h,
-                      child: GlassContainer(
-                        color: ColorApp.primaryColor.withOpacity(.9),
-                        borderRadius: BorderRadius.circular(16),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(data.length, (index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 7.w, right: 7.w, top: 20.h),
-                                  child: NextWeekCard(
-                                      daysOfWeek: dayNext[index],
-                                      forecastModel: data[index]),
-                                );
-                              }),
+              BlocBuilder<ForecastControllerBloc, ForecastControllerState>(
+                  builder: (context, states) {
+                if (states is ForecastLoaded) {
+                  List<ListElement> data = [];
+                  data.add(states.foreCastModel.list[0]);
+                  data.add(states.foreCastModel.list[1]);
+                  data.add(states.foreCastModel.list[2]);
+                  data.add(states.foreCastModel.list[3]);
+                  List<String> dayNext = HomeUtils.getNextFiveDays();
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 4, left: 3, right: 3),
+                    child: Center(
+                      child: SizedBox(
+                        height: 220.h,
+                        child: GlassContainer(
+                          color: ColorApp.primaryColor.withOpacity(.9),
+                          borderRadius: BorderRadius.circular(16),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(data.length, (index) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 7.w, right: 7.w, top: 20.h),
+                                    child: NextWeekCard(
+                                        daysOfWeek: dayNext[index],
+                                        forecastModel: data[index]),
+                                  );
+                                }),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-
-
-              }
-              return Container();
-            })
-
-          ],
-          
+                  );
+                }
+                return Container();
+              })
+            ],
+          ),
         ),
       ),
     );

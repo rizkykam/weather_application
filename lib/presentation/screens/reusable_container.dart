@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:weather_application/application/provider.dart';
 import 'package:weather_application/const/color_app.dart';
 import 'package:weather_application/const/extension_app.dart';
 import 'package:weather_application/const/resources_app.dart';
@@ -11,7 +13,7 @@ import 'package:weather_application/data/entity/forecast_entity.dart';
 
 import 'package:weather_application/const/utils/weather_fonts.dart';
 
-class NextWeekCard extends StatelessWidget {
+class NextWeekCard extends ConsumerWidget {
   final String daysOfWeek;
   final ListElement forecastModel;
 
@@ -19,7 +21,9 @@ class NextWeekCard extends StatelessWidget {
       {super.key, required this.daysOfWeek, required this.forecastModel});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themperatureRef = ref.watch(themperatureProvider);
+
     return Column(
       children: [
         Text(
@@ -48,7 +52,8 @@ class NextWeekCard extends StatelessWidget {
 
         /// temp
         Text(
-          "${(forecastModel.main!.temp! / 10).ceil()} ${WeatherAppString.celcius}",
+          // "${(forecastModel.main!.temp! / 10).ceil()} ${WeatherAppString.celcius}",
+          themperatureRef == ThemperatureData.celsius ? forecastModel.main!.temp.celcius : forecastModel.main!.temp.fahrenheit,
           style: WeatherFonts.large()
               .copyWith(
                   color: ColorApp.whiteColor,
