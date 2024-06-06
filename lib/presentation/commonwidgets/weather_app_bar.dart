@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weather_application/const/color_app.dart';
 import 'package:weather_application/const/utils/weather_font_size.dart';
 import 'package:weather_application/const/utils/weather_fonts.dart';
 
-class WeatherAppBar extends StatelessWidget {
+class WeatherAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String cityNames;
   final Function onTap;
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   const WeatherAppBar({
     super.key,
     required this.cityNames,
-    required this.onTap,
+    required this.onTap, required this.scaffoldKey,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
-      backgroundColor: ColorApp.transParentColor,
+      backgroundColor: ColorApp.primaryColor,
       title: Text(
         cityNames,
         style: WeatherFonts.medium(
@@ -36,4 +38,7 @@ class WeatherAppBar extends StatelessWidget {
       ], // Removes shadow
     );
   }
+  
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

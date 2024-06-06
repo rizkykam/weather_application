@@ -37,8 +37,8 @@ class _WeatherHomeState extends State<WeatherHomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:
-        BlocBuilder<ConnectivityBloc, ConnectivityState>(
+    return Scaffold(
+      body: BlocBuilder<ConnectivityBloc, ConnectivityState>(
       builder: (context, state) {
         if (state is ConnectedState) {
           return BlocConsumer<WeatherControllerBloc,
@@ -53,6 +53,7 @@ class _WeatherHomeState extends State<WeatherHomePage>
               return previous != current;
             },
             builder: (context, state) {
+              log('builder home page: ${state.toString()}');
               if (state is CurrentCityDataLoaded) {
                 WeatherModel weatherCityModel = state.currentCityData;
                 weatherCityModel.isCurrentCity = true;

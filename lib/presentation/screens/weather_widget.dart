@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:weather_application/application/provider.dart';
 import 'package:weather_application/data/entity/weather_entity.dart';
+import 'package:weather_application/presentation/commonwidgets/side_bar.dart';
 import 'package:weather_application/presentation/commonwidgets/weather_app_bar.dart';
 import 'package:weather_application/presentation/screens/reusable_container.dart';
 import 'package:weather_icons/weather_icons.dart';
@@ -19,26 +22,42 @@ import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:weather_application/presentation/controllers/forecast_controller/forecast_controller_bloc.dart';
 import 'package:weather_application/presentation/screens/search_bottom_widget.dart';
 
-class WeatherUIWidget extends StatelessWidget {
+class WeatherUIWidget extends ConsumerWidget {
   final WeatherModel weatherModel;
+  final _key = GlobalKey<ScaffoldState>();
 
-  const WeatherUIWidget({super.key, required this.weatherModel});
+  WeatherUIWidget({super.key, required this.weatherModel});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Size size = MediaQuery.of(context).size;
+    final themperatureRef = ref.watch(themperatureProvider);
+
     return Scaffold(
+      drawer: const Sidebar(),
+      appBar: WeatherAppBar(
+        scaffoldKey: _key,
+        cityNames: weatherModel.name,
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return const SearchBottomWidget();
+            },
+          );
+        },
+      ),
       body: Container(
         width: size.width,
         height: size.height,
-        padding: const EdgeInsets.only(top: 40, left: 10, right: 10),
+        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
         color: ColorApp.primaryColor.withOpacity(.1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              height: size.height * .60,
+              height: size.height * .55,
               decoration: BoxDecoration(
                 gradient: ColorApp.linearGradientBlue,
                 boxShadow: [
@@ -53,18 +72,6 @@ class WeatherUIWidget extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  WeatherAppBar(
-                    cityNames: weatherModel.name,
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return const SearchBottomWidget();
-                        },
-                      );
-                    },
-                  ),
-                  
                   10.0.sizeHeight,
                   HomeUtils.getWeatherIcon(
                     weatherModel.weather[0].icon) !=
@@ -90,67 +97,13 @@ class WeatherUIWidget extends StatelessWidget {
                           text: TextSpan(children: <InlineSpan>[
                         TextSpan(
                           text:
-                              (weatherModel.main.temp.ceil()).toString(),
+                              themperatureRef == ThemperatureData.celsius ? weatherModel.main.temp.celcius : weatherModel.main.temp.fahrenheit,
                           style: WeatherFonts.medium(
                                   fontWeight: FontWeight.w500,
                                   color: ColorApp.whiteColor)
                               .copyWith(fontSize: WeatherFontSize.s40),
-                        ),
-                        WidgetSpan(
-                            child: Transform.translate(
-                                offset: const Offset(2, -8),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      WeatherAppString.celcius,
-                                      style: WeatherFonts.medium(
-                                              fontWeight: FontWeight.w500,
-                                              color: ColorApp
-                                                  .whiteColor)
-                                          .copyWith(
-                                              fontSize:
-                                                  WeatherFontSize.s24),
-                                    ),
-                                  ],
-                                )))
+                        )
                       ])),
-                      // Text(
-                      //   WeatherAppString.slash,
-                      //   style: WeatherFonts.large(
-                      //           fontWeight: FontWeight.w500,
-                      //           color: ColorApp.whiteColor)
-                      //       .copyWith(fontSize: WeatherFontSize.s40),
-                      // ),
-                      // RichText(
-                      //     text: TextSpan(children: <InlineSpan>[
-                      //   TextSpan(
-                      //     text:
-                      //         (((9 / 5) * weatherModel.main.temp).ceil() +
-                      //                 32)
-                      //             .toString(),
-                      //     style: WeatherFonts.large(
-                      //             fontWeight: FontWeight.w500,
-                      //             color: ColorApp.whiteColor)
-                      //         .copyWith(fontSize: WeatherFontSize.s40),
-                      //   ),
-                      //   WidgetSpan(
-                      //       child: Transform.translate(
-                      //           offset: const Offset(2, -8),
-                      //           child: Row(
-                      //             children: [
-                      //               Text(
-                      //                 WeatherAppString.farenheit,
-                      //                 style: WeatherFonts.medium(
-                      //                         fontWeight: FontWeight.w500,
-                      //                         color: ColorApp
-                      //                             .whiteColor)
-                      //                     .copyWith(
-                      //                         fontSize:
-                      //                             WeatherFontSize.s24),
-                      //               ),
-                      //             ],
-                      //           )))
-                      // ]))
                     ],
                   ),
 
@@ -186,7 +139,7 @@ class WeatherUIWidget extends StatelessWidget {
                     )),
 
                   Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(4.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -281,7 +234,7 @@ class WeatherUIWidget extends StatelessWidget {
                 data.add(states.foreCastModel.list[3]);
                 List<String> dayNext = HomeUtils.getNextFiveDays();
                 return Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 3, right: 3),
+                  padding: const EdgeInsets.only(top: 4, left: 3, right: 3),
                   child: Center(
                     child: SizedBox(
                       height: 220.h,

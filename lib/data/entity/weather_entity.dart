@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:weather/weather.dart';
+
 WeatherModel weatherFromJson(String str) =>
     WeatherModel.fromJson(json.decode(str));
 
@@ -117,7 +119,7 @@ class Coord {
 }
 
 class Main {
-  final double temp;
+  final Themperature temp;
   final double feelsLike;
   final double tempMin;
   final double tempMax;
@@ -134,7 +136,7 @@ class Main {
   });
 
   factory Main.fromJson(Map<String, dynamic> json) => Main(
-        temp: json["temp"]?.toDouble(),
+        temp: Themperature(value: json["temp"]?.toDouble()),
         feelsLike: json["feels_like"]?.toDouble(),
         tempMin: json["temp_min"]?.toDouble(),
         tempMax: json["temp_max"]?.toDouble(),
@@ -198,4 +200,13 @@ class Wind {
         "speed": speed,
         "deg": deg,
       };
+}
+
+class Themperature {
+  final double value;
+
+  Themperature({required this.value});
+
+  String get celcius => '${value.toInt()}°C';
+  String get fahrenheit => '${(value * 1.8 + 32).toInt()}°F';
 }
