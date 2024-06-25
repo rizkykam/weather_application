@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:weather_application/application/provider.dart';
-import 'package:weather_application/bloc/weather_bloc.dart';
 import 'package:weather_application/const/applocator/service_locator.dart';
 import 'package:weather_application/const/utils/weather_string.dart';
 import 'package:weather_application/presentation/controllers/conectivity/connectivity_bloc.dart';
 import 'package:weather_application/presentation/controllers/forecast_controller/forecast_controller_bloc.dart';
 import 'package:weather_application/presentation/controllers/weather_controller/weather_controller_bloc.dart';
-import 'bloc/weather_bloc.dart';
 import 'package:weather_application/routes/weather_routes.dart';
 import 'package:weather_application/const/utils/theme.dart';
-
-import 'package:weather_application/screens/home_screen.dart';
-
+import 'package:logging/logging.dart';
 
 
 void main() {
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    print('[${record.loggerName}]${record.level.name}-${record.sequenceNumber}: ${record.message}');
+  });
+
   WidgetsFlutterBinding.ensureInitialized();
   ServicesLocator().init();
   runApp(const ProviderScope(child: MyApp()));

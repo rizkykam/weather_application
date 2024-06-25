@@ -25,13 +25,13 @@ class Sidebar extends ConsumerWidget {
               ItemMenu(
                 title: 'Home',
                 onClick: () {
-              
+                  Navigator.pushNamed(context, '/home');
                 },
               ),
               ItemMenu(
                 title: 'Favorites',
                 onClick: () {
-                  
+                  Navigator.pushNamed(context, '/favorites');
                 },
               ),
               Padding(
