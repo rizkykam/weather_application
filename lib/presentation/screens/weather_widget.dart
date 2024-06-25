@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logging/logging.dart';
 import 'package:weather_application/application/provider.dart';
 import 'package:weather_application/data/entity/weather_entity.dart';
 import 'package:weather_application/presentation/commonwidgets/side_bar.dart';
@@ -32,6 +32,9 @@ class WeatherUIWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Size size = MediaQuery.of(context).size;
     final themperatureRef = ref.watch(themperatureProvider);
+    final log = Logger('HomePage');
+    ref.watch(checkFavoriteProvider(weatherModel.id));
+    final favoriteRef = ref.watch(isFavoriteProvider);
 
     return Scaffold(
       drawer: const Sidebar(),
@@ -71,151 +74,171 @@ class WeatherUIWidget extends ConsumerWidget {
                   ],
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Column(
+                child: Stack(
+                  alignment: Alignment.topRight,
                   children: [
-                    10.0.sizeHeight,
-                    HomeUtils.getWeatherIcon(
-                      weatherModel.weather[0].icon) !=
-                      WeatherIcons.refresh
-                      ? Icon(
-                        HomeUtils.getWeatherIcon(
-                          weatherModel.weather[0].icon),
-                          size: 80.0,
-                          color: ColorApp.yellowColor,
-                      )
-                      : Image.network(
-                        HomeUtils.getWeatherIconURL(
-                          weatherModel.weather[0].icon),
-                          color: ColorApp.yellowColor,
+                    IconButton(
+                      icon: Icon(
+                        favoriteRef ? Icons.favorite : Icons.favorite_border_outlined,
+                        fill: 1,
+                        color: Colors.redAccent.shade400,
                       ),
-                    10.0.sizeHeight,
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      onPressed: () {
+                        log.info('${weatherModel.name} is favorited: ${favoriteRef}');
+                        if (!favoriteRef) {
+                          ref.watch(saveFavoriteProvider(weatherModel));
+                        } else {
+                          ref.watch(removeFavoriteProvider(weatherModel.id));
+                        }
+                      },
+                    ),
+                    Column(
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            children: <InlineSpan>[
-                              TextSpan(
-                                text: themperatureRef == ThemperatureData.celsius ? weatherModel.main.temp.celcius : weatherModel.main.temp.fahrenheit,
-                                style: WeatherFonts.medium(
-                                  fontWeight: FontWeight.w500,
-                                  color: ColorApp.whiteColor,
-                                ).copyWith(fontSize: WeatherFontSize.s40),
-                              )
-                            ]
+                        10.0.sizeHeight,
+                        HomeUtils.getWeatherIcon(
+                          weatherModel.weather[0].icon) !=
+                          WeatherIcons.refresh
+                          ? Icon(
+                            HomeUtils.getWeatherIcon(
+                              weatherModel.weather[0].icon),
+                              size: 80.0,
+                              color: ColorApp.yellowColor,
                           )
-                        ),
-                      ],
-                    ),
-                    Text(
-                      weatherModel.weather[0].description.capitalizeFirstLater(),
-                      style: WeatherFonts.large(
-                        fontWeight: FontWeight.w400,
-                        color: ColorApp.whiteColor
-                      ).copyWith(fontSize: WeatherFontSize.s30),
-                    ),
-                    Center(
-                      child: Text(
-                        HomeUtils.today(),
-                        style: WeatherFonts.medium(
-                          fontWeight: FontWeight.w200,
-                          color: ColorApp.whiteColor)
-                          .copyWith(fontSize: WeatherFontSize.s24),
-                      )
-                    ),
-                    2.0.sizeHeight,
-                    Center(
-                      child: Text(
-                        HomeUtils.formatDateTime(weatherModel.updatedAt.toIso8601String()),
-                        style: WeatherFonts.large(
-                          fontWeight: FontWeight.w300,
-                          color: ColorApp.whiteColor.withOpacity(0.75)
-                        ).copyWith(fontSize: WeatherFontSize.s16,),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          : Image.network(
+                            HomeUtils.getWeatherIconURL(
+                              weatherModel.weather[0].icon),
+                              color: ColorApp.yellowColor,
+                          ),
+                        10.0.sizeHeight,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Column(
-                              children: [
-                                Image.asset(WeatherAppResources.humidtyIcon, width: 30.0, height: 30.0,),
-                                3.0.sizeHeight,
-                                Text(
-                                  WeatherAppString.humidity,
-                                  style: WeatherFonts.large(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorApp.whiteColor)
-                                      .copyWith(
-                                          fontSize: WeatherFontSize.s14),
-                                ),
-                                3.0.sizeHeight,
-                                Text(
-                                  "${weatherModel.main.humidity} ${WeatherAppString.percent}",
-                                  style: WeatherFonts.large(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorApp.whiteColor)
-                                      .copyWith(
-                                          fontSize: WeatherFontSize.s14),
-                                )
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Image(
-                                    image: Svg(WeatherAppResources.windIcon)),
-                                3.0.sizeHeight,
-                                Text(
-                                  WeatherAppString.wind,
-                                  style: WeatherFonts.large(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorApp.whiteColor)
-                                      .copyWith(
-                                          fontSize: WeatherFontSize.s14),
-                                ),
-                                3.0.sizeHeight,
-                                Text(
-                                  "${weatherModel.wind.speed} ${WeatherAppString.kmh}",
-                                  style: WeatherFonts.large(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorApp.whiteColor)
-                                      .copyWith(
-                                          fontSize: WeatherFontSize.s14),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Image(
-                                    image:
-                                        Svg(WeatherAppResources.feelsLike)),
-                                3.0.sizeHeight,
-                                Text(
-                                  WeatherAppString.feelsLike,
-                                  style: WeatherFonts.large(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorApp.whiteColor)
-                                      .copyWith(
-                                          fontSize: WeatherFontSize.s14),
-                                ),
-                                3.0.sizeHeight,
-                                Text(
-                                  weatherModel.main.feelsLike
-                                      .ceil()
-                                      .toString(),
-                                  style: WeatherFonts.large(
-                                          fontWeight: FontWeight.w500,
-                                          color: ColorApp.whiteColor)
-                                      .copyWith(
-                                          fontSize: WeatherFontSize.s14),
-                                ),
-                              ],
+                            RichText(
+                              text: TextSpan(
+                                children: <InlineSpan>[
+                                  TextSpan(
+                                    text: themperatureRef == ThemperatureData.celsius ? weatherModel.main.temp.celcius : weatherModel.main.temp.fahrenheit,
+                                    style: WeatherFonts.medium(
+                                      fontWeight: FontWeight.w500,
+                                      color: ColorApp.whiteColor,
+                                    ).copyWith(fontSize: WeatherFontSize.s40),
+                                  )
+                                ]
+                              )
                             ),
                           ],
                         ),
-                      )
+                        Text(
+                          weatherModel.weather[0].description.capitalizeFirstLater(),
+                          style: WeatherFonts.large(
+                            fontWeight: FontWeight.w400,
+                            color: ColorApp.whiteColor
+                          ).copyWith(fontSize: WeatherFontSize.s30),
+                        ),
+                        Center(
+                          child: Text(
+                            HomeUtils.today(),
+                            style: WeatherFonts.medium(
+                              fontWeight: FontWeight.w200,
+                              color: ColorApp.whiteColor)
+                              .copyWith(fontSize: WeatherFontSize.s24),
+                          )
+                        ),
+                        2.0.sizeHeight,
+                        Center(
+                          child: Text(
+                            HomeUtils.formatDateTime(weatherModel.updatedAt.toIso8601String()),
+                            style: WeatherFonts.large(
+                              fontWeight: FontWeight.w300,
+                              color: ColorApp.whiteColor.withOpacity(0.75)
+                            ).copyWith(fontSize: WeatherFontSize.s16,),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    Image.asset(WeatherAppResources.humidtyIcon, width: 30.0, height: 30.0,),
+                                    3.0.sizeHeight,
+                                    Text(
+                                      WeatherAppString.humidity,
+                                      style: WeatherFonts.large(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorApp.whiteColor)
+                                          .copyWith(
+                                              fontSize: WeatherFontSize.s14),
+                                    ),
+                                    3.0.sizeHeight,
+                                    Text(
+                                      "${weatherModel.main.humidity} ${WeatherAppString.percent}",
+                                      style: WeatherFonts.large(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorApp.whiteColor)
+                                          .copyWith(
+                                              fontSize: WeatherFontSize.s14),
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Image(
+                                        image: Svg(WeatherAppResources.windIcon)),
+                                    3.0.sizeHeight,
+                                    Text(
+                                      WeatherAppString.wind,
+                                      style: WeatherFonts.large(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorApp.whiteColor)
+                                          .copyWith(
+                                              fontSize: WeatherFontSize.s14),
+                                    ),
+                                    3.0.sizeHeight,
+                                    Text(
+                                      "${weatherModel.wind.speed} ${WeatherAppString.kmh}",
+                                      style: WeatherFonts.large(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorApp.whiteColor)
+                                          .copyWith(
+                                              fontSize: WeatherFontSize.s14),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Image(
+                                        image:
+                                            Svg(WeatherAppResources.feelsLike)),
+                                    3.0.sizeHeight,
+                                    Text(
+                                      WeatherAppString.feelsLike,
+                                      style: WeatherFonts.large(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorApp.whiteColor)
+                                          .copyWith(
+                                              fontSize: WeatherFontSize.s14),
+                                    ),
+                                    3.0.sizeHeight,
+                                    Text(
+                                      weatherModel.main.feelsLike
+                                          .ceil()
+                                          .toString(),
+                                      style: WeatherFonts.large(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorApp.whiteColor)
+                                          .copyWith(
+                                              fontSize: WeatherFontSize.s14),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                      ],
+                    ),
                   ],
                 ),
               ),
